@@ -62,6 +62,8 @@ const ProductEdit = () => {
     // Kiểm tra mã sản phẩm không được để trống
     if (!formData.productCode) {
       errors.productCode = 'Mã sản phẩm không được để trống';
+    } else if (formData.productCode.length > 20) {
+      errors.productCode = 'Mã sản phẩm không được dài quá 20 ký tự';
     }
 
     // Kiểm tra tên sản phẩm không dài quá 100 ký tự
@@ -118,9 +120,37 @@ const ProductEdit = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Cắt bớt text nếu vượt quá giới hạn thay vì chặn hoàn toàn
+    let processedValue = value;
+    
+    if (name === 'productName' && value.length > 100) {
+      processedValue = value.substring(0, 100);
+      toast.warning('Tên sản phẩm đã được cắt bớt xuống 100 ký tự!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
+    if (name === 'productCode' && value.length > 20) {
+      processedValue = value.substring(0, 20);
+      toast.warning('Mã sản phẩm đã được cắt bớt xuống 20 ký tự!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: processedValue
     }));
     
     // Xóa lỗi validation khi user bắt đầu sửa
@@ -129,6 +159,84 @@ const ProductEdit = () => {
         ...prev,
         [name]: ''
       }));
+    }
+  };
+
+  const handlePaste = (e) => {
+    const { name } = e.target;
+    const pastedText = e.clipboardData.getData('text');
+    
+    // Kiểm tra độ dài text được paste
+    if (name === 'productName' && pastedText.length > 100) {
+      e.preventDefault();
+      const truncatedText = pastedText.substring(0, 100);
+      e.target.value = truncatedText;
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: truncatedText
+      }));
+      
+      toast.warning('Text được paste đã được cắt bớt xuống 100 ký tự!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
+    if (name === 'productCode' && pastedText.length > 20) {
+      e.preventDefault();
+      const truncatedText = pastedText.substring(0, 20);
+      e.target.value = truncatedText;
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: truncatedText
+      }));
+      
+      toast.warning('Text được paste đã được cắt bớt xuống 20 ký tự!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    const { name } = e.target;
+    const currentValue = e.target.value;
+    
+    // Ngăn chặn nhập thêm ký tự nếu đã đạt giới hạn
+    if (name === 'productName' && currentValue.length >= 100 && 
+        !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) {
+      e.preventDefault();
+      toast.warning('Tên sản phẩm đã đạt giới hạn 100 ký tự!', {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+    
+    if (name === 'productCode' && currentValue.length >= 20 && 
+        !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) {
+      e.preventDefault();
+      toast.warning('Mã sản phẩm đã đạt giới hạn 20 ký tự!', {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
   };
 
@@ -212,8 +320,18 @@ const ProductEdit = () => {
             name="productCode"
             value={formData.productCode}
             onChange={handleInputChange}
+            onPaste={handlePaste}
+            onKeyDown={handleKeyDown}
             required
+            maxLength={20}
+            placeholder="Nhập mã sản phẩm (tối đa 20 ký tự)"
           />
+          <div className={`char-counter ${
+            formData.productCode.length >= 18 ? 'danger' : 
+            formData.productCode.length >= 15 ? 'warning' : ''
+          }`}>
+            {formData.productCode.length}/20 ký tự
+          </div>
           {validationErrors.productCode && (
             <span className="error-message">{validationErrors.productCode}</span>
           )}
@@ -226,9 +344,18 @@ const ProductEdit = () => {
             name="productName"
             value={formData.productName}
             onChange={handleInputChange}
+            onPaste={handlePaste}
+            onKeyDown={handleKeyDown}
             required
             maxLength={100}
+            placeholder="Nhập tên sản phẩm (tối đa 100 ký tự)"
           />
+          <div className={`char-counter ${
+            formData.productName.length >= 90 ? 'danger' : 
+            formData.productName.length >= 80 ? 'warning' : ''
+          }`}>
+            {formData.productName.length}/100 ký tự
+          </div>
           {validationErrors.productName && (
             <span className="error-message">{validationErrors.productName}</span>
           )}

@@ -38,7 +38,9 @@ const ProductList = () => {
       const categoriesData = await categoriesResponse.json();
 
       // Sắp xếp sản phẩm theo số lượng tăng dần
-      const sortedProducts = productsData.sort((a, b) => a.quantity - b.quantity);
+    // Sắp xếp sản phẩm theo số lượng giảm dần
+const sortedProducts = productsData.sort((a, b) => b.quantity - a.quantity);
+
       
       setProducts(sortedProducts);
       setCategories(categoriesData);

@@ -7,16 +7,16 @@
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden; /* Prevent scrollbars on the entire page */
+  overflow: hidden; 
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f5f5f5;
   color: #333;
-  display: flex; /* Ensure body is a flex container */
+  display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure body takes at least full viewport height */
+  min-height: 100vh; 
 }
 
 .App {
@@ -24,7 +24,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 100vw; /* Ensure full viewport width */
+  width: 100vw;
 }
 
 .App-header {
@@ -39,12 +39,12 @@ body {
   color: white;
   font-size: 1.5rem;
   font-weight: 600;
-  margin: 0; /* Remove default margin for consistency */
+  margin: 0; 
 }
 
 main {
   flex: 1;
-  overflow: auto; /* Allow scrolling within main if content overflows */
+  overflow: auto; 
   width: 100%;
 }
 
@@ -120,6 +120,10 @@ main {
   background: #fff3cd;
   color: #856404;
   border: 1px solid #ffeaa7;
+}
+
+.Toastify__toast--warning .Toastify__progress-bar {
+  background: #ffc107;
 }
 
 .Toastify__progress-bar {
